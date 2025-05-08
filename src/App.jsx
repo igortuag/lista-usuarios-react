@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
   const [usuarios, setUsuarios] = useState([
@@ -13,6 +13,22 @@ function App() {
       email: "maria@exemplo.com"
     }
   ]);
+
+  const carregarUsuariosDeApi = async () => {
+    const response = await fetch("https://reqres.in/api/users", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": "reqres-free-v1"
+      }
+    });
+
+    const json = await response.json();
+
+    if (json && json.data) {
+      setUsuarios(json.data)
+    }
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -29,7 +45,11 @@ function App() {
       setUsuarios([...usuarios, novoUsuario]);
       form.reset();
     }
-  }
+  };
+
+  useEffect(() => {
+    carregarUsuariosDeApi();
+  }, []);
 
   return (
     <main>
